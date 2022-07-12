@@ -1,6 +1,9 @@
 defmodule Nordigen do
+  alias Nordigen.Account
+  alias Nordigen.AccountDetails
   alias Nordigen.Bank
   alias Nordigen.Link
+  alias Nordigen.Transactions
 
   @moduledoc """
   Documentation for `Nordigen`.
@@ -56,6 +59,53 @@ defmodule Nordigen do
     url
     |> get_request(headers)
     |> format_response()
+  end
+
+  @doc """
+  List all bank accounts by requisition_id
+  https://ob.nordigen.com/api/v2/requisitions/8126e9fb-93c9-4228-937c-68f0383c2df7/
+
+  Returns `{:ok, list}` or `{:error, reason}`.
+  ## Example
+  {:ok,  [
+   %{
+     "bic" => "AIPTAU32",
+     "countries" => ["NO", "SE", "FI", "DK", "EE", "LV", "LT", "GB", "NL", "CZ",
+      "ES", "PL", "BE", "DE", "AT", "BG", "HR", "CY", "FR", "GR", "HU", "IS",
+      "IE", "IT", "LI", "LU", "MT", "PT", "RO", "SK", "SI"],
+     "id" => "AIRWALLEX_AIPTAU32",
+     "logo" => "https://cdn.nordigen.com/ais/AIRWALLEX_AIPTAU32_1.png",
+     "name" => "Airwallex",
+     "transaction_total_days" => "730"
+   },...]}
+  """
+  def list_accounts(requisition_id, token) do
+    url = "https://ob.nordigen.com/api/v2/requisitions/#{requisition_id}/"
+    headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
+
+    url
+    |> get_request(headers)
+    |> format_response(:list_accounts)
+  end
+
+  def get_account_transactions(account_id, token) do
+    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/transactions/"
+
+    headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
+
+    url
+    |> get_request(headers)
+    |> format_response(:account_transactions)
+  end
+
+  def get_account_details(account_id, token) do
+    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/details/"
+
+    headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
+
+    url
+    |> get_request(headers)
+    |> format_response(:account_details)
   end
 
   @doc """
@@ -126,6 +176,39 @@ defmodule Nordigen do
     %{"access" => access} = Poison.decode!(body)
 
     {:ok, access}
+  end
+
+  defp format_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: 200}},
+         :list_accounts
+       ) do
+    requisition = Poison.decode!(body)
+
+    account_requisition = Account.decode(requisition)
+
+    {:ok, account_requisition}
+  end
+
+  defp format_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: 200}},
+         :account_details
+       ) do
+    %{"account" => account} = Poison.decode!(body)
+
+     account_details = AccountDetails.decode(account)
+
+    {:ok, account_details}
+  end
+
+  defp format_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: 200}},
+         :account_transactions
+       ) do
+    %{"transactions" => transactions} = Poison.decode!(body)
+
+    list = Transactions.decode(transactions)
+
+    {:ok, list}
   end
 
   defp format_response({:ok, %HTTPoison.Response{status_code: status_code} = response}, _)
