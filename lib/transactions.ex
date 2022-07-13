@@ -10,7 +10,7 @@ defmodule Nordigen.Transactions do
   end
 
   defmodule Booked do
-    schema ~w(bankTransactionCode bookingDate debtorAccount debtorName remittanceInformationUnstructured transactionAmount transactionId valueDate) do
+    schema ~w(additionalInformation balanceAfterTransaction bankTransactionCode bookingDate bookingDateTime checkId creditorAccount creditorAgent creditorId creditorName currencyExchange debtorAccount debtorAgent debtorName endToEndId entryReference mandateId proprietaryBankTransactionCode purposeCode remittanceInformationStructured remittanceInformationStructuredArray remittanceInformationUnstructured remittanceInformationUnstructuredArray transactionAmount transactionId ultimateCreditor ultimateDebtor valueDate) do
       field(:transactionAmount, TransactionAmount)
       field(:debtorAccount, DebtorAccount)
     end

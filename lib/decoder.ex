@@ -8,9 +8,9 @@ defmodule Decoder do
       def decode(%{} = map) do
         map
         |> Map.take(unquote(str_fields))
-        |> Enum.map(fn({k, v}) -> {String.to_existing_atom(k), v} end)
+        |> Enum.map(fn {k, v} -> {String.to_existing_atom(k), v} end)
         |> Enum.map(&decode/1)
-        |> fn(data) -> struct(__MODULE__, data) end.()
+        |> (fn data -> struct(__MODULE__, data) end).()
       end
 
       unquote(block)
@@ -24,7 +24,7 @@ defmodule Decoder do
       cond do
         is_atom(unquote(args)) ->
           def decode({unquote(field), arg}) when is_list(arg) do
-            {unquote(field), Enum.map(arg, fn(data) -> unquote(args).decode(data) end)}
+            {unquote(field), Enum.map(arg, fn data -> unquote(args).decode(data) end)}
           end
 
           def decode({unquote(field), arg}) when is_map(arg) do
@@ -33,10 +33,9 @@ defmodule Decoder do
 
         is_function(unquote(args)) ->
           def decode({unquote(field), arg}) when is_list(arg) do
-            {unquote(field), Enum.map(arg, fn(data) -> unquote(args).(data) end)}
+            {unquote(field), Enum.map(arg, fn data -> unquote(args).(data) end)}
           end
       end
-
     end
   end
 end

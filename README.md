@@ -12,7 +12,7 @@ For a full list of endpoints and arguments, see the [docs](https://nordigen.com/
 ```elixir
 def deps do
   [
-    {:nordigen, github: "vlarok/nordigen"},
+    {:nordigen, "~> 0.1.0"}
   ]
 end
 ```

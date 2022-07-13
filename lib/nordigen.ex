@@ -4,6 +4,7 @@ defmodule Nordigen do
   alias Nordigen.Bank
   alias Nordigen.Link
   alias Nordigen.Transactions
+  alias Nordigen.Balance
 
   @moduledoc """
   Documentation for `Nordigen`.
@@ -15,7 +16,6 @@ defmodule Nordigen do
 
   @doc """
   Get Access Token
-  https://ob.nordigen.com/api/v2/token/new/
   Returns `{:ok, [%Binance.HistoricalTrade{}]}` or `{:error, reason}`.
   ## Example
   {:ok, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUlI1NiJ9.eyJ0b2tlbl90sXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU3NjQwNTczLCJqdGkiOiI3YzcwZDA1MzUwYTA0M2Q4OGVkMGJmNDc5YzlkMWRiNCIsImlkIjoxMzA3NCwic2VjcmV0X2lkIjoiYzFhMDQ0ZjQtOGMyMy00YTQ5LTlkM2MtZWE5OTkzM2ZlZmEwIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.DZralEAXmHW7NhH0fI6B4NkYgxCwoyPabO3Ryt4u2Tk"}
@@ -35,21 +35,21 @@ defmodule Nordigen do
   end
 
   @doc """
-  List all Banks by country code
-  https://ob.nordigen.com/api/v2/institutions/?country=EE
+  List all Banks by country code.
 
   Returns `{:ok, list}` or `{:error, reason}`.
   ## Example
-  {:ok,  [
-   %{
-     "bic" => "AIPTAU32",
-     "countries" => ["NO", "SE", "FI", "DK", "EE", "LV", "LT", "GB", "NL", "CZ",
+  {:ok,
+  [
+   %Nordigen.Bank{
+     bic: "AIPTAU32",
+     countries: ["NO", "SE", "FI", "DK", "EE", "LV", "LT", "GB", "NL", "CZ",
       "ES", "PL", "BE", "DE", "AT", "BG", "HR", "CY", "FR", "GR", "HU", "IS",
       "IE", "IT", "LI", "LU", "MT", "PT", "RO", "SK", "SI"],
-     "id" => "AIRWALLEX_AIPTAU32",
-     "logo" => "https://cdn.nordigen.com/ais/AIRWALLEX_AIPTAU32_1.png",
-     "name" => "Airwallex",
-     "transaction_total_days" => "730"
+     id: "AIRWALLEX_AIPTAU32",
+     logo: "https://cdn.nordigen.com/ais/AIRWALLEX_AIPTAU32_1.png",
+     name: "Airwallex",
+     transaction_total_days: "730"
    },...]}
   """
   def list_banks(iso, token) do
@@ -62,22 +62,27 @@ defmodule Nordigen do
   end
 
   @doc """
-  List all bank accounts by requisition_id
-  https://ob.nordigen.com/api/v2/requisitions/8126e9fb-93c9-4228-937c-68f0383c2df7/
+  Returns account information by requisition_id
 
   Returns `{:ok, list}` or `{:error, reason}`.
   ## Example
-  {:ok,  [
-   %{
-     "bic" => "AIPTAU32",
-     "countries" => ["NO", "SE", "FI", "DK", "EE", "LV", "LT", "GB", "NL", "CZ",
-      "ES", "PL", "BE", "DE", "AT", "BG", "HR", "CY", "FR", "GR", "HU", "IS",
-      "IE", "IT", "LI", "LU", "MT", "PT", "RO", "SK", "SI"],
-     "id" => "AIRWALLEX_AIPTAU32",
-     "logo" => "https://cdn.nordigen.com/ais/AIRWALLEX_AIPTAU32_1.png",
-     "name" => "Airwallex",
-     "transaction_total_days" => "730"
-   },...]}
+  {:ok,
+  %Nordigen.Account{
+   account_selection: false,
+   accounts: ["7e944232-bda9-40bc-b784-660c7ab5fe78",
+    "99a0bfe2-0bef-46df-bff2-e9ae0c6c5838"],
+   agreement: "13c51d1e-5133-4d70-8093-f53caa8dac13",
+   created: "2022-07-14T10:47:39.912391Z",
+   id: "61bbe16d-875c-4d26-bd1c-091fb1cd79fb",
+   institution_id: "SANDBOXFINANCE_SFIN0000",
+   link: "https://ob.nordigen.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
+   redirect: "http://localhost:4000/wallets/50",
+   redirect_immediate: false,
+   reference: "619db4fc-0362-11ed-87dd-1e00e2346e69",
+   ssn: nil,
+   status: "LN",
+   user_languages: nil
+  }}
   """
   def list_accounts(requisition_id, token) do
     url = "https://ob.nordigen.com/api/v2/requisitions/#{requisition_id}/"
@@ -88,7 +93,48 @@ defmodule Nordigen do
     |> format_response(:list_accounts)
   end
 
-  def get_account_transactions(account_id, token) do
+  @doc """
+  List account transactions by account_id
+
+  Returns `{:ok, list}` or `{:error, reason}`.
+  ## Example
+  [{:ok,
+  %Nordigen.Transactions.Booked{
+    additionalInformation: nil,
+    balanceAfterTransaction: nil,
+    bankTransactionCode: "PMNT",
+    bookingDate: "2022-07-12",
+    bookingDateTime: nil,
+    checkId: nil,
+    creditorAccount: nil,
+    creditorAgent: nil,
+    creditorId: nil,
+    creditorName: nil,
+    currencyExchange: nil,
+    debtorAccount: nil,
+    debtorAgent: nil,
+    debtorName: nil,
+    endToEndId: nil,
+    entryReference: nil,
+    mandateId: nil,
+    proprietaryBankTransactionCode: nil,
+    purposeCode: nil,
+    remittanceInformationStructured: nil,
+    remittanceInformationStructuredArray: nil,
+    remittanceInformationUnstructured: "PAYMENT Alderaan Coffe",
+    remittanceInformationUnstructuredArray: nil,
+    transactionAmount: %Nordigen.Transactions.TransactionAmount{
+      amount: "-15.00",
+      currency: "EUR"
+    },
+    transactionId: "2022071201721808-1",
+    ultimateCreditor: nil,
+    ultimateDebtor: nil,
+    valueDate: "2022-07-12"
+  },..]
+  """
+
+  def list_account_transactions(account_id, token) do
     url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/transactions/"
 
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
@@ -96,6 +142,36 @@ defmodule Nordigen do
     url
     |> get_request(headers)
     |> format_response(:account_transactions)
+  end
+
+  @doc """
+  List account balances
+
+  Returns `{:ok, list}` or `{:error, reason}`.
+  ## Example
+  {:ok,
+  %Nordigen.Balance{
+   balances: [
+     %Nordigen.Balance.Balances{
+       balanceAmount: %Nordigen.Balance.Balances.BalanceAmount{
+         amount: "1913.12",
+         currency: "EUR"
+       },
+       balanceType: "expected",
+       creditLimitIncluded: nil,
+       lastChangeDateTime: nil,
+       lastCommittedTransaction: nil,
+       referenceDate: "2022-07-14"
+     },...]}
+  """
+  def get_account_balances(account_id, token) do
+    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/balances/"
+
+    headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
+
+    url
+    |> get_request(headers)
+    |> format_response(:account_balances)
   end
 
   def get_account_details(account_id, token) do
@@ -110,24 +186,23 @@ defmodule Nordigen do
 
   @doc """
   Build Authentication Link
-  https://ob.nordigen.com/api/v2/requisitions/
   Returns `{:ok, [%Binance.HistoricalTrade{}]}` or `{:error, reason}`.
   ## Example
   {:ok,
-  %{
-    "account_selection" => false,
-    "accounts" => [],
-    "agreement" => "",
-    "created" => "2022-07-11T15:52:33.166703Z",
-    "id" => "4c4a1294-c376-45cb-bfa3-e597b48136cd",
-    "institution_id" => "LHV_LHVBEE22",
-    "link" => "https://ob.nordigen.com/psd2/start/4c4a0094-c976-45lb-bfa3-e597b21136cd/LHV_LHVBEE22",
-    "redirect" => "http://localhost:4000",
-    "redirect_immediate" => false,
-    "reference" => "79d92da6-0131-11ed-ad4d-1e00e2346e69",
-    "ssn" => nil,
-    "status" => "CR",
-    "user_language" => "EN"
+  %Nordigen.Link{
+   account_selection: false,
+   accounts: [],
+   agreement: "",
+   created: "2022-07-14T10:47:39.912391Z",
+   id: "61bbe16d-875c-4d26-bd1c-091fb1cd79fb",
+   institution_id: "SANDBOXFINANCE_SFIN0000",
+   link: "https://ob.nordigen.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
+   redirect: "http://localhost:4000/wallets/50",
+   redirect_immediate: false,
+   reference: "619db4fc-0362-11ed-87dd-1e00e2346e69",
+   ssn: nil,
+   status: "CR",
+   user_language: "EN"
   }}
   """
   def requisition_link(redirect, institution_id, token, language_iso \\ "EN") do
@@ -195,7 +270,7 @@ defmodule Nordigen do
        ) do
     %{"account" => account} = Poison.decode!(body)
 
-     account_details = AccountDetails.decode(account)
+    account_details = AccountDetails.decode(account)
 
     {:ok, account_details}
   end
@@ -209,6 +284,24 @@ defmodule Nordigen do
     list = Transactions.decode(transactions)
 
     {:ok, list}
+  end
+
+  defp format_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: 200}},
+         :account_balances
+       ) do
+    balances = Poison.decode!(body)
+
+    list = Balance.decode(balances)
+
+    {:ok, list}
+  end
+
+  defp format_response({:ok, %HTTPoison.Response{status_code: status_code} = response}, _)
+       when status_code == 401 do
+    Logger.warn(~s(Nordigen API response: #{inspect(response)}))
+
+    {:error, :invalid_token}
   end
 
   defp format_response({:ok, %HTTPoison.Response{status_code: status_code} = response}, _)
