@@ -17,7 +17,7 @@ def deps do
 end
 ```
 
-2. Before starting to use API you will need to create a new secret and get your `SECRET_ID` and `SECRET_KEY` from the [Nordigen's Open Banking Portal](https://ob.nordigen.com/user-secrets/).
+2. Before starting to use API you will need to create a new secret and get your `SECRET_ID` and `SECRET_KEY` from the [Nordigen's Open Banking Portal](https://bankaccountdata.gocardless.com/user-secrets/).
 
 ```
  config :nordigen,

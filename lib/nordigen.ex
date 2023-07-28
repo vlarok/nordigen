@@ -12,7 +12,7 @@ defmodule Nordigen do
 
   require Logger
 
-  @endpoint Application.get_env(:nordigen, :end_point, "https://ob.nordigen.com")
+  @endpoint Application.get_env(:nordigen, :end_point, "https://bankaccountdata.gocardless.com")
 
   @doc """
   Get Access Token
@@ -53,7 +53,7 @@ defmodule Nordigen do
    },...]}
   """
   def list_banks(iso, token) do
-    url = "https://ob.nordigen.com/api/v2/institutions/?country=#{iso}"
+    url = "https://bankaccountdata.gocardless.com/api/v2/institutions/?country=#{iso}"
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
 
     url
@@ -75,7 +75,7 @@ defmodule Nordigen do
    created: "2022-07-14T10:47:39.912391Z",
    id: "61bbe16d-875c-4d26-bd1c-091fb1cd79fb",
    institution_id: "SANDBOXFINANCE_SFIN0000",
-   link: "https://ob.nordigen.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
+   link: "https://bankaccountdata.gocardless.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
    redirect: "http://localhost:4000/wallets/50",
    redirect_immediate: false,
    reference: "619db4fc-0362-11ed-87dd-1e00e2346e69",
@@ -85,7 +85,7 @@ defmodule Nordigen do
   }}
   """
   def list_accounts(requisition_id, token) do
-    url = "https://ob.nordigen.com/api/v2/requisitions/#{requisition_id}/"
+    url = "https://bankaccountdata.gocardless.com/api/v2/requisitions/#{requisition_id}/"
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
 
     url
@@ -135,7 +135,7 @@ defmodule Nordigen do
   """
 
   def list_account_transactions(account_id, token) do
-    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/transactions/"
+    url = "https://bankaccountdata.gocardless.com/api/v2/accounts/#{account_id}/transactions/"
 
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
 
@@ -165,7 +165,7 @@ defmodule Nordigen do
      },...]}
   """
   def get_account_balances(account_id, token) do
-    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/balances/"
+    url = "https://bankaccountdata.gocardless.com/api/v2/accounts/#{account_id}/balances/"
 
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
 
@@ -175,7 +175,7 @@ defmodule Nordigen do
   end
 
   def get_account_details(account_id, token) do
-    url = "https://ob.nordigen.com/api/v2/accounts/#{account_id}/details/"
+    url = "https://bankaccountdata.gocardless.com/api/v2/accounts/#{account_id}/details/"
 
     headers = [{"accept", "application/json"}, {"Authorization", "Bearer #{token}"}]
 
@@ -196,7 +196,7 @@ defmodule Nordigen do
    created: "2022-07-14T10:47:39.912391Z",
    id: "61bbe16d-875c-4d26-bd1c-091fb1cd79fb",
    institution_id: "SANDBOXFINANCE_SFIN0000",
-   link: "https://ob.nordigen.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
+   link: "https://bankaccountdata.gocardless.com/psd2/start/61bbe16d-875c-4d26-bd1c-091fb1cd79fb/SANDBOXFINANCE_SFIN0000",
    redirect: "http://localhost:4000/wallets/50",
    redirect_immediate: false,
    reference: "619db4fc-0362-11ed-87dd-1e00e2346e69",

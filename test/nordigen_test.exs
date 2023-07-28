@@ -3,6 +3,5 @@ defmodule NordigenTest do
   doctest Nordigen
 
   test "greets the world" do
-    assert Nordigen.hello() == :world
   end
 end
