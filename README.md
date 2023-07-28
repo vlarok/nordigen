@@ -1,6 +1,6 @@
 # Nordigen Elixir Library
 
-This is the client library for [Nordigen](https://nordigen.com/en).
+This is the client library for [GoCardless](https://gocardless.com).
 
 For a full list of endpoints and arguments, see the [docs](https://nordigen.com/en/account_information_documenation/api-documention/overview/).
 
