@@ -23,7 +23,7 @@ defmodule Nordigen.MixProject do
 
   defp deps do
     [
-      {:httpoison, "~> 1.8"},
+      {:httpoison, "~> 2.0"},
       {:elixir_uuid, "~> 1.2"},
       {:poison, "~> 5.0"},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
