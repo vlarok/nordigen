@@ -7,7 +7,7 @@ For a full list of endpoints and arguments, see the [docs](https://nordigen.com/
 
 ## Installation
 
-1. The package can be installed by adding `binance` to your list of dependencies in `mix.exs`:
+1. The package can be installed by adding `nordigen` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
